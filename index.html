@@ -109,6 +109,7 @@
       <button class="newbtn" id="new-d">+ Drill</button>
     </div>
     <div class="navwrap">
+      <div class="navitem" id="nav-access" style="margin-bottom:4px;"><span class="nm">⚿ Access &amp; invite codes</span><span class="count" id="ac-badge" style="display:none">0</span></div>
       <div class="navhead">Workouts <span class="count" id="w-count">0</span></div>
       <div id="nav-workouts"><div class="navempty">No workouts yet</div></div>
       <div class="navhead">Drills <span class="count" id="d-count">0</span></div>
@@ -168,6 +169,29 @@
       </div>
       <div id="d-err" class="err"></div>
     </div>
+
+    <!-- ACCESS PANEL -->
+    <div id="ed-access" class="hide">
+      <div class="ed-head"><h2>Access &amp; invite codes</h2></div>
+      <div class="card" style="margin-bottom:18px;">
+        <div style="font-weight:700;margin-bottom:10px;">Generate an invite code</div>
+        <div class="row" style="align-items:flex-end;">
+          <div><label>Cohort / team label (optional)</label><input id="ac-cohort" class="field" placeholder="default" /></div>
+          <div style="flex:none;"><button id="ac-gen" class="btn">Generate code</button></div>
+        </div>
+        <div id="ac-new" class="hide" style="margin-top:12px;padding:12px 14px;border-radius:9px;background:var(--accent-soft);">
+          <div class="muted" style="font-size:12px;">New code — give this to the player:</div>
+          <div style="font-size:24px;font-weight:800;letter-spacing:2px;user-select:all;" id="ac-newcode"></div>
+        </div>
+        <div id="ac-err" class="err"></div>
+      </div>
+
+      <div style="font-weight:800;margin:0 2px 8px;">Pending access requests <span class="count" id="ac-reqcount" style="background:#e7edf2;color:#0b7f8c;">0</span></div>
+      <div id="ac-requests"><div class="navempty" style="color:var(--muted)">No pending requests.</div></div>
+
+      <div style="font-weight:800;margin:22px 2px 8px;">Invite codes</div>
+      <div id="ac-codes"><div class="navempty" style="color:var(--muted)">No codes yet.</div></div>
+    </div>
   </div></main>
 </div>
 
@@ -182,7 +206,7 @@
   var screen=function(id){["login","notadmin","app"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});};
   firebase.initializeApp(window.FIREBASE_CONFIG);
   var auth=firebase.auth(), db=firebase.firestore();
-  var drillsCache=[], workoutsCache=[], sel=null; // sel = {type,id}
+  var drillsCache=[], workoutsCache=[], codesCache=[], reqCache=[], sel=null; // sel = {type,id}
 
   // ---- auth ----
   $("li-go").onclick=function(){doAuth(false);}; $("li-su").onclick=function(){doAuth(true);};
@@ -221,6 +245,14 @@
       $("w-count").textContent=workoutsCache.length; renderNav("workouts");
       if(sel&&sel.type==="workout"&&!find(workoutsCache,sel.id))showEmpty();
     });
+    db.collection("invite-codes").onSnapshot(function(qs){
+      codesCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;codesCache.push(o);});
+      renderCodes();
+    }, function(){});
+    db.collection("access-requests").onSnapshot(function(qs){
+      reqCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;reqCache.push(o);});
+      renderRequests(); updateBadge();
+    }, function(){});
   }
 
   function renderNav(kind){
@@ -237,7 +269,8 @@
     });
   }
 
-  function showOnly(id){["empty","ed-workout","ed-drill"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});}
+  function showOnly(id){["empty","ed-workout","ed-drill","ed-access"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
+    var na=$("nav-access"); if(na) na.classList.toggle("on", id==="ed-access");}
   function showEmpty(){sel=null;showOnly("empty");renderNav("workouts");renderNav("drills");}
 
   // ---- workout editor ----
@@ -288,6 +321,63 @@
       .catch(function(e){$("d-err").textContent=e.message;});
   };
   $("d-del").onclick=function(){var id=$("d-id").value;if(id&&confirm("Delete this drill?"))db.collection("drills").doc(id)["delete"]().then(showEmpty);};
+
+  // ---- access & invite codes ----
+  $("nav-access").onclick=function(){ openAccess(); };
+  function openAccess(){ sel=null; renderNav("workouts"); renderNav("drills"); showOnly("ed-access"); $("ac-new").classList.add("hide"); $("ac-err").textContent=""; }
+  function genCode(){ var A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",s=""; for(var i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)]; return "HMS-"+s; }
+  $("ac-gen").onclick=function(){
+    var cohort=$("ac-cohort").value.trim()||"default", code=genCode();
+    $("ac-err").textContent=""; $("ac-gen").disabled=true;
+    db.collection("invite-codes").doc(code).set({claimed:false,cohortId:cohort,createdAt:ts(),note:"portal",createdBy:auth.currentUser?auth.currentUser.uid:null})
+      .then(function(){ $("ac-newcode").textContent=code; $("ac-new").classList.remove("hide"); $("ac-gen").disabled=false; })
+      .catch(function(e){ $("ac-err").textContent=e.message; $("ac-gen").disabled=false; });
+  };
+  function renderCodes(){
+    var host=$("ac-codes"); if(!host) return;
+    if(!codesCache.length){ host.innerHTML='<div class="navempty" style="color:var(--muted)">No codes yet.</div>'; return; }
+    var arr=codesCache.slice().sort(function(a,b){ return tsv(b.createdAt)-tsv(a.createdAt); });
+    host.innerHTML=arr.map(function(c){
+      var claimed=c.claimed===true;
+      return '<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding:11px 14px;">'+
+        '<div style="flex:1;"><span style="font-family:monospace;font-weight:800;font-size:15px;letter-spacing:1px;user-select:all;">'+esc(c.id)+'</span> '+
+        '<span class="muted" style="font-size:12px;">· '+esc(c.cohortId||"default")+'</span></div>'+
+        '<span class="pill '+(claimed?"draft":"pub")+'">'+(claimed?"used":"open")+'</span></div>';
+    }).join("");
+  }
+  function renderRequests(){
+    var host=$("ac-requests"); if(!host) return;
+    var pend=reqCache.filter(function(r){ var s=r.status||"pending"; return s!=="approved"&&s!=="declined"; });
+    if(!pend.length){ host.innerHTML='<div class="navempty" style="color:var(--muted)">No pending requests.</div>'; return; }
+    host.innerHTML=pend.map(function(r){
+      return '<div class="card" data-req="'+esc(r.id)+'" style="margin-bottom:8px;">'+
+        '<div style="display:flex;align-items:flex-start;gap:12px;">'+
+          '<div style="flex:1;"><div style="font-weight:700;">'+esc(r.name||"(no name)")+' <span class="muted" style="font-weight:500;font-size:13px;">'+esc(r.email||"")+'</span></div>'+
+          '<div class="muted" style="font-size:13px;margin-top:3px;">'+esc([r.age?("age "+r.age):"",r.position||""].filter(Boolean).join(" · "))+'</div>'+
+          (r.whyInterested?'<div style="font-size:13px;margin-top:6px;line-height:1.5;">'+esc(r.whyInterested)+'</div>':"")+'</div>'+
+          '<button class="btn sm ap" data-req="'+esc(r.id)+'">Approve</button>'+
+        '</div><div class="ap-out" style="margin-top:8px;"></div></div>';
+    }).join("");
+    Array.prototype.forEach.call(host.querySelectorAll(".ap"),function(b){ b.onclick=function(){ approveRequest(b.getAttribute("data-req"), b); }; });
+  }
+  function approveRequest(id,btn){
+    var r=find(reqCache,id); if(!r) return;
+    var code=genCode();
+    if(btn){btn.disabled=true;btn.textContent="…";}
+    db.collection("invite-codes").doc(code).set({claimed:false,cohortId:"default",createdAt:ts(),note:"approved request",createdBy:auth.currentUser?auth.currentUser.uid:null,forEmail:r.email||null})
+      .then(function(){ return db.collection("access-requests").doc(id).update({status:"approved",issuedInviteCode:code,reviewedAt:ts(),reviewedBy:auth.currentUser?auth.currentUser.uid:null}); })
+      .then(function(){
+        var out=document.querySelector('.card[data-req="'+id+'"] .ap-out');
+        if(out) out.innerHTML='<div style="padding:10px;border-radius:8px;background:var(--accent-soft);">Code for '+esc(r.email||r.name||"player")+': <b style="font-family:monospace;letter-spacing:1px;user-select:all;">'+esc(code)+'</b> — email this to them.</div>';
+      })
+      .catch(function(e){ if(btn){btn.disabled=false;btn.textContent="Approve";} alert("Couldn't approve: "+e.message); });
+  }
+  function updateBadge(){
+    var n=reqCache.filter(function(r){ var s=r.status||"pending"; return s!=="approved"&&s!=="declined"; }).length;
+    var b=$("ac-badge"); if(b){ b.textContent=n; b.style.display=n?"":"none"; }
+    var rc=$("ac-reqcount"); if(rc) rc.textContent=n;
+  }
+  function tsv(t){ return t&&t.toMillis?t.toMillis():(t&&t.seconds?t.seconds*1000:0); }
 
   // ---- helpers ----
   function ts(){return firebase.firestore.FieldValue.serverTimestamp();}
