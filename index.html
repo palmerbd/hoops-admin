@@ -84,6 +84,7 @@
       <div id="li-err" class="err"></div>
       <button id="li-go" class="btn" style="width:100%">Sign In</button>
       <button id="li-su" class="btn ghost" style="width:100%;margin-top:8px">Create account</button>
+      <div style="text-align:center;margin-top:12px"><span id="li-reset" class="muted" style="cursor:pointer;text-decoration:underline;font-size:13px">Forgot password?</span></div>
     </div>
   </div>
 </div>
@@ -185,6 +186,12 @@
 
   // ---- auth ----
   $("li-go").onclick=function(){doAuth(false);}; $("li-su").onclick=function(){doAuth(true);};
+  $("li-reset").onclick=function(){
+    var e=$("li-email").value.trim();
+    if(!e){$("li-err").style.color='';$("li-err").textContent="Type your email above first, then tap Forgot password.";return;}
+    auth.sendPasswordResetEmail(e).then(function(){$("li-err").style.color='#0b7f8c';$("li-err").textContent="Reset email sent to "+e+" — check inbox and spam.";})
+      .catch(function(err){$("li-err").style.color='';$("li-err").textContent=friendly(err);});
+  };
   function doAuth(su){var e=$("li-email").value.trim(),p=$("li-pass").value;
     if(!e||!p){$("li-err").textContent="Enter email and password.";return;}$("li-err").textContent="";
     (su?auth.createUserWithEmailAndPassword(e,p):auth.signInWithEmailAndPassword(e,p)).catch(function(err){$("li-err").textContent=friendly(err);});}
