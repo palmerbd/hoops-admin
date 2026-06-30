@@ -110,6 +110,9 @@
     </div>
     <div class="navwrap">
       <div class="navitem" id="nav-access" style="margin-bottom:4px;"><span class="nm">⚿ Access &amp; invite codes</span><span class="count" id="ac-badge" style="display:none">0</span></div>
+      <div class="navitem" id="nav-cohorts" style="margin-bottom:4px;"><span class="nm">▦ Cohorts</span><span class="count" id="co-count">0</span></div>
+      <div class="navitem" id="nav-players" style="margin-bottom:4px;"><span class="nm">👤 Players</span></div>
+      <div class="navitem" id="nav-config" style="margin-bottom:4px;"><span class="nm">⚙ App settings</span></div>
       <div class="navhead">Workouts <span class="count" id="w-count">0</span></div>
       <div id="nav-workouts"><div class="navempty">No workouts yet</div></div>
       <div class="navhead">Drills <span class="count" id="d-count">0</span></div>
@@ -134,6 +137,28 @@
         <textarea id="w-desc" rows="2" placeholder="What this workout focuses on"></textarea>
         <label>Drills (check in the order players should do them)</label>
         <div class="drillpick" id="w-drills"><small class="help">Add drills first, then pick them here.</small></div>
+        <label>Schedule (optional)</label>
+        <select id="w-sched-mode"><option value="none">No schedule</option><option value="recurring">Recurring (weekly)</option><option value="oneoff">One-time date</option></select>
+        <div id="w-sched-recurring" class="hide" style="margin-top:10px;">
+          <label>Days</label>
+          <div class="row" style="gap:6px;">
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="0" /> Sun</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="1" /> Mon</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="2" /> Tue</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="3" /> Wed</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="4" /> Thu</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="5" /> Fri</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="6" /> Sat</label>
+          </div>
+          <label style="margin-top:10px;">Time</label>
+          <input id="w-sched-time" class="field" type="time" />
+        </div>
+        <div id="w-sched-oneoff" class="hide" style="margin-top:10px;">
+          <div class="row">
+            <div><label>Date</label><input id="w-sched-date" class="field" type="date" /></div>
+            <div><label>Time</label><input id="w-sched-otime" class="field" type="time" /></div>
+          </div>
+        </div>
       </div>
       <div class="actions">
         <label class="check"><input type="checkbox" id="w-pub" checked /> Published (visible in app)</label>
@@ -176,7 +201,7 @@
       <div class="card" style="margin-bottom:18px;">
         <div style="font-weight:700;margin-bottom:10px;">Generate an invite code</div>
         <div class="row" style="align-items:flex-end;">
-          <div><label>Cohort / team label (optional)</label><input id="ac-cohort" class="field" placeholder="default" /></div>
+          <div><label>Cohort / team</label><select id="ac-cohort"><option value="default">Default / no cohort</option></select></div>
           <div style="flex:none;"><button id="ac-gen" class="btn">Generate code</button></div>
         </div>
         <div id="ac-new" class="hide" style="margin-top:12px;padding:12px 14px;border-radius:9px;background:var(--accent-soft);">
@@ -202,6 +227,79 @@
       <div style="font-weight:800;margin:22px 2px 8px;">Invite codes</div>
       <div id="ac-codes"><div class="navempty" style="color:var(--muted)">No codes yet.</div></div>
     </div>
+
+    <!-- COHORTS PANEL -->
+    <div id="ed-cohorts" class="hide">
+      <div class="ed-head"><h2>Cohorts</h2><button id="co-new" class="btn sm">+ New cohort</button></div>
+      <div id="co-form" class="card hide" style="margin-bottom:18px;">
+        <input type="hidden" id="co-id" />
+        <div class="formgrid">
+          <label>Name</label>
+          <input id="co-name" class="field" placeholder="e.g. Varsity 2026" />
+          <label>Goal label</label>
+          <input id="co-goallabel" class="field" placeholder="e.g. Tryouts" />
+          <label>Goal date</label>
+          <input id="co-goaldate" class="field" type="date" />
+        </div>
+        <div class="actions">
+          <button id="co-cancel" class="btn ghost sm">Cancel</button>
+          <span class="sp"></span>
+          <button id="co-save" class="btn">Save cohort</button>
+        </div>
+        <div id="co-err" class="err"></div>
+      </div>
+      <div id="co-list"><div class="navempty" style="color:var(--muted)">No cohorts yet.</div></div>
+    </div>
+
+    <!-- PLAYERS PANEL -->
+    <div id="ed-players" class="hide">
+      <div class="ed-head"><h2>Players</h2></div>
+      <div class="card" style="margin-bottom:18px;">
+        <label>Filter by cohort</label>
+        <select id="pl-filter"><option value="all">All cohorts</option></select>
+      </div>
+      <div id="pl-list"><div class="navempty" style="color:var(--muted)">Loading players…</div></div>
+    </div>
+
+    <!-- APP SETTINGS PANEL -->
+    <div id="ed-config" class="hide">
+      <div class="ed-head"><h2>App settings</h2></div>
+      <div class="card" style="margin-bottom:18px;">
+        <div style="font-weight:700;margin-bottom:10px;">Bottom nav</div>
+        <div class="muted" style="font-size:13px;margin-bottom:12px;">The four tabs along the bottom of the app, in order.</div>
+        <div id="cf-nav"></div>
+        <div class="actions">
+          <span class="sp"></span>
+          <button id="cf-nav-save" class="btn">Save bottom nav</button>
+        </div>
+        <div id="cf-nav-err" class="err"></div>
+      </div>
+
+      <div class="card">
+        <div class="ed-head" style="margin-bottom:12px;"><div style="font-weight:700;">Onboarding questions</div><button id="cf-q-new" class="btn sm">+ Add question</button></div>
+        <div id="cf-q-form" class="card hide" style="margin-bottom:14px;background:#fafcfd;">
+          <input type="hidden" id="cf-q-id" />
+          <div class="formgrid">
+            <label>Label</label>
+            <input id="cf-q-label" class="field" placeholder="e.g. What position do you play?" />
+            <div class="row">
+              <div><label>Type</label><select id="cf-q-type"><option value="choice">Choice</option><option value="text">Text</option><option value="number">Number</option><option value="scale">Scale</option></select></div>
+              <div><label>Order</label><input id="cf-q-order" class="field" type="number" placeholder="0" /></div>
+            </div>
+            <label>Options (comma-separated — for Choice only)</label>
+            <input id="cf-q-options" class="field" placeholder="Guard, Forward, Center" />
+            <label class="check" style="margin-top:14px;"><input type="checkbox" id="cf-q-required" /> Required</label>
+          </div>
+          <div class="actions">
+            <button id="cf-q-cancel" class="btn ghost sm">Cancel</button>
+            <span class="sp"></span>
+            <button id="cf-q-save" class="btn">Save question</button>
+          </div>
+          <div id="cf-q-err" class="err"></div>
+        </div>
+        <div id="cf-q-list"><div class="navempty" style="color:var(--muted)">No questions yet.</div></div>
+      </div>
+    </div>
   </div></main>
 </div>
 
@@ -216,7 +314,7 @@
   var screen=function(id){["login","notadmin","app"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});};
   firebase.initializeApp(window.FIREBASE_CONFIG);
   var auth=firebase.auth(), db=firebase.firestore();
-  var drillsCache=[], workoutsCache=[], codesCache=[], reqCache=[], sel=null; // sel = {type,id}
+  var drillsCache=[], workoutsCache=[], codesCache=[], reqCache=[], cohortsCache=[], questionsCache=[], usersCache=[], sel=null; // sel = {type,id}
 
   // ---- auth ----
   $("li-go").onclick=function(){doAuth(false);}; $("li-su").onclick=function(){doAuth(true);};
@@ -263,6 +361,14 @@
       reqCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;reqCache.push(o);});
       renderRequests(); updateBadge();
     }, function(){});
+    db.collection("cohorts").orderBy("name").onSnapshot(function(qs){
+      cohortsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;cohortsCache.push(o);});
+      $("co-count").textContent=cohortsCache.length; renderCohorts(); fillCohortSelects();
+    }, function(){});
+    db.collection("onboarding-questions").orderBy("order").onSnapshot(function(qs){
+      questionsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;questionsCache.push(o);});
+      renderQuestions(); if(sel&&sel.type==="players")renderPlayers();
+    }, function(){});
     setupSkin();
   }
 
@@ -280,8 +386,11 @@
     });
   }
 
-  function showOnly(id){["empty","ed-workout","ed-drill","ed-access"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
-    var na=$("nav-access"); if(na) na.classList.toggle("on", id==="ed-access");}
+  function showOnly(id){["empty","ed-workout","ed-drill","ed-access","ed-cohorts","ed-players","ed-config"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
+    var na=$("nav-access"); if(na) na.classList.toggle("on", id==="ed-access");
+    var nc=$("nav-cohorts"); if(nc) nc.classList.toggle("on", id==="ed-cohorts");
+    var np=$("nav-players"); if(np) np.classList.toggle("on", id==="ed-players");
+    var ng=$("nav-config"); if(ng) ng.classList.toggle("on", id==="ed-config");}
   function showEmpty(){sel=null;showOnly("empty");renderNav("workouts");renderNav("drills");}
 
   // ---- workout editor ----
@@ -290,9 +399,38 @@
     $("w-id").value=id;$("w-name").value=w.name||"";$("w-desc").value=w.description||"";$("w-diff").value=w.difficulty||"Beginner";
     $("w-pub").checked=w.published!==false;$("w-title").textContent="Edit workout";$("w-del").classList.remove("hide");
     renderPicker();var ids=w.orderedDrillIds||[];document.querySelectorAll('#w-drills input').forEach(function(c){c.checked=ids.indexOf(c.value)>=0;});
+    loadSchedule(w.schedule);
     showOnly("ed-workout");renderNav("workouts");renderNav("drills");}
+  function loadSchedule(sch){
+    sch=sch||null;
+    var mode=(sch&&sch.mode)||"none";
+    $("w-sched-mode").value=mode;
+    var days=(sch&&sch.days)||[];
+    document.querySelectorAll('.w-sched-day').forEach(function(c){c.checked=days.indexOf(num(c.value))>=0;});
+    $("w-sched-time").value=(mode==="recurring"&&sch&&sch.time)?sch.time:"";
+    $("w-sched-date").value=(mode==="oneoff"&&sch&&sch.date)?sch.date:"";
+    $("w-sched-otime").value=(mode==="oneoff"&&sch&&sch.time)?sch.time:"";
+    syncSchedMode();
+  }
+  function syncSchedMode(){
+    var m=$("w-sched-mode").value;
+    $("w-sched-recurring").classList.toggle("hide",m!=="recurring");
+    $("w-sched-oneoff").classList.toggle("hide",m!=="oneoff");
+  }
+  $("w-sched-mode").onchange=syncSchedMode;
+  function computeSchedule(){
+    var m=$("w-sched-mode").value;
+    if(m==="recurring"){
+      var days=[];document.querySelectorAll('.w-sched-day:checked').forEach(function(c){days.push(num(c.value));});
+      return {mode:"recurring",days:days,time:$("w-sched-time").value||""};
+    }
+    if(m==="oneoff"){
+      return {mode:"oneoff",date:$("w-sched-date").value||"",time:$("w-sched-otime").value||""};
+    }
+    return null;
+  }
   function resetW(){$("w-id").value="";$("w-name").value="";$("w-desc").value="";$("w-diff").value="Beginner";$("w-pub").checked=true;
-    $("w-title").textContent="New workout";$("w-del").classList.add("hide");$("w-err").textContent="";renderPicker();}
+    $("w-title").textContent="New workout";$("w-del").classList.add("hide");$("w-err").textContent="";renderPicker();loadSchedule(null);}
   function renderPicker(){
     if(!drillsCache.length){$("w-drills").innerHTML='<small class="help">Add drills first, then pick them here.</small>';return;}
     var chk={};document.querySelectorAll('#w-drills input:checked').forEach(function(c){chk[c.value]=true;});
@@ -303,7 +441,7 @@
     var ids=[];document.querySelectorAll('#w-drills input:checked').forEach(function(c){ids.push(c.value);});
     var pts=0;ids.forEach(function(id){var d=find(drillsCache,id);if(d)pts+=(d.points||0);});
     var data={name:name,description:$("w-desc").value.trim()||null,orderedDrillIds:ids,totalPoints:pts,difficulty:$("w-diff").value,
-      tags:[],scheduleRule:null,reminderTime:null,published:$("w-pub").checked,updatedAt:ts()};
+      tags:[],schedule:computeSchedule(),published:$("w-pub").checked,updatedAt:ts()};
     var id=$("w-id").value;
     (id?db.collection("workouts").doc(id).set(data,{merge:true}):db.collection("workouts").add(add0(data)))
       .then(function(ref){ if(!id&&ref)sel={type:"workout",id:ref.id}; flash($("w-save"),"Saved ✓"); })
@@ -335,6 +473,9 @@
 
   // ---- access & invite codes ----
   $("nav-access").onclick=function(){ openAccess(); };
+  $("nav-cohorts").onclick=function(){ openCohorts(); };
+  $("nav-players").onclick=function(){ openPlayers(); };
+  $("nav-config").onclick=function(){ openConfig(); };
   // ---- app skin (light/dark), stored at /app-config/theme ----
   function setSkinLabel(s){ var el=$("sk-cur"); if(el) el.textContent=(s==="light")?"Light":"Dark"; }
   function setupSkin(){
@@ -404,6 +545,182 @@
     var rc=$("ac-reqcount"); if(rc) rc.textContent=n;
   }
   function tsv(t){ return t&&t.toMillis?t.toMillis():(t&&t.seconds?t.seconds*1000:0); }
+
+  // ---- cohorts ----
+  function cohortName(id){ if(!id||id==="default")return null; var c=find(cohortsCache,id); return c?(c.name||c.id):null; }
+  function fillCohortSelects(){
+    // invite-code generator select
+    var ac=$("ac-cohort");
+    if(ac){
+      var prev=ac.value;
+      ac.innerHTML='<option value="default">Default / no cohort</option>'+cohortsCache.map(function(c){
+        return '<option value="'+esc(c.id)+'">'+esc(c.name||c.id)+'</option>';
+      }).join("");
+      if(prev&&(prev==="default"||find(cohortsCache,prev)))ac.value=prev;
+    }
+    // players filter select
+    var pf=$("pl-filter");
+    if(pf){
+      var pprev=pf.value;
+      pf.innerHTML='<option value="all">All cohorts</option>'+cohortsCache.map(function(c){
+        return '<option value="'+esc(c.id)+'">'+esc(c.name||c.id)+'</option>';
+      }).join("");
+      if(pprev&&(pprev==="all"||find(cohortsCache,pprev)))pf.value=pprev;
+    }
+  }
+  function openCohorts(){ sel={type:"cohorts",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-cohorts"); hideCohortForm(); }
+  function hideCohortForm(){ $("co-form").classList.add("hide"); $("co-err").textContent=""; }
+  function resetCohortForm(){ $("co-id").value=""; $("co-name").value=""; $("co-goallabel").value=""; $("co-goaldate").value=""; $("co-err").textContent=""; }
+  $("co-new").onclick=function(){ resetCohortForm(); $("co-form").classList.remove("hide"); $("co-name").focus(); };
+  $("co-cancel").onclick=function(){ hideCohortForm(); };
+  $("co-save").onclick=function(){
+    var name=$("co-name").value.trim(); if(!name){ $("co-err").textContent="Name is required."; return; } $("co-err").textContent="";
+    var data={name:name,goalLabel:$("co-goallabel").value.trim()||null,goalDate:$("co-goaldate").value||null,updatedAt:ts()};
+    var id=$("co-id").value;
+    (id?db.collection("cohorts").doc(id).set(data,{merge:true}):db.collection("cohorts").add(add0(data)))
+      .then(function(){ hideCohortForm(); flash($("co-save"),"Saved ✓"); })
+      .catch(function(e){ $("co-err").textContent=e.message; });
+  };
+  function renderCohorts(){
+    var host=$("co-list"); if(!host) return;
+    if(!cohortsCache.length){ host.innerHTML='<div class="navempty" style="color:var(--muted)">No cohorts yet.</div>'; return; }
+    host.innerHTML=cohortsCache.map(function(c){
+      var sub=[c.goalLabel?esc(c.goalLabel):"", c.goalDate?esc(c.goalDate):""].filter(Boolean).join(" · ");
+      return '<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding:12px 14px;">'+
+        '<div style="flex:1;"><div style="font-weight:700;">'+esc(c.name||"(untitled)")+'</div>'+
+        (sub?'<div class="muted" style="font-size:13px;margin-top:2px;">'+sub+'</div>':"")+'</div>'+
+        '<button class="btn ghost sm co-edit" data-id="'+esc(c.id)+'">Edit</button>'+
+        '<button class="btn danger sm co-del" data-id="'+esc(c.id)+'">Delete</button></div>';
+    }).join("");
+    Array.prototype.forEach.call(host.querySelectorAll(".co-edit"),function(b){ b.onclick=function(){ editCohort(b.getAttribute("data-id")); }; });
+    Array.prototype.forEach.call(host.querySelectorAll(".co-del"),function(b){ b.onclick=function(){ delCohort(b.getAttribute("data-id")); }; });
+  }
+  function editCohort(id){
+    var c=find(cohortsCache,id); if(!c) return;
+    $("co-id").value=id; $("co-name").value=c.name||""; $("co-goallabel").value=c.goalLabel||""; $("co-goaldate").value=c.goalDate||""; $("co-err").textContent="";
+    $("co-form").classList.remove("hide"); $("co-name").focus();
+  }
+  function delCohort(id){ if(confirm("Delete this cohort?")) db.collection("cohorts").doc(id)["delete"]().catch(function(e){ alert("Couldn't delete: "+e.message); }); }
+
+  // ---- players ----
+  function openPlayers(){ sel={type:"players",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-players"); loadPlayers(); }
+  function loadPlayers(){
+    $("pl-list").innerHTML='<div class="navempty" style="color:var(--muted)">Loading players…</div>';
+    db.collection("users").get().then(function(qs){
+      usersCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;usersCache.push(o);});
+      renderPlayers();
+    }).catch(function(e){ $("pl-list").innerHTML='<div class="err">'+esc(e.message)+'</div>'; });
+  }
+  $("pl-filter").onchange=function(){ renderPlayers(); };
+  function qLabelMap(){ var m={}; questionsCache.forEach(function(q){ m[q.id]=q.label||q.id; }); return m; }
+  function renderPlayers(){
+    var host=$("pl-list"); if(!host) return;
+    var filt=$("pl-filter")?$("pl-filter").value:"all";
+    var arr=usersCache.filter(function(u){ if(filt==="all")return true; return (u.cohortId||"default")===filt; });
+    if(!arr.length){ host.innerHTML='<div class="navempty" style="color:var(--muted)">No players yet.</div>'; return; }
+    var qmap=qLabelMap();
+    host.innerHTML=arr.map(function(u){
+      var cn=cohortName(u.cohortId)||"—";
+      var opts='<option value="default"'+((u.cohortId&&u.cohortId!=="default")?"":" selected")+'>Default</option>'+cohortsCache.map(function(c){
+        return '<option value="'+esc(c.id)+'"'+(u.cohortId===c.id?" selected":"")+'>'+esc(c.name||c.id)+'</option>';
+      }).join("");
+      var ob=u.onboarding&&typeof u.onboarding==="object"?u.onboarding:null;
+      var obRows="";
+      if(ob){ obRows=Object.keys(ob).map(function(k){
+        var lbl=qmap[k]||k; var v=ob[k]; if(v&&typeof v==="object")v=JSON.stringify(v);
+        return '<div style="display:flex;gap:10px;padding:4px 0;font-size:13px;"><span class="muted" style="flex:none;min-width:140px;">'+esc(lbl)+'</span><span>'+esc(v)+'</span></div>';
+      }).join(""); }
+      return '<div class="card" style="margin-bottom:8px;padding:12px 14px;">'+
+        '<div style="display:flex;align-items:flex-start;gap:12px;">'+
+          '<div style="flex:1;min-width:0;"><div style="font-weight:700;">'+esc(u.name||u.email||"(no name)")+'</div>'+
+          '<div class="muted" style="font-size:13px;margin-top:2px;">'+esc(u.email||"")+'</div>'+
+          '<div class="muted" style="font-size:13px;margin-top:2px;">Cohort: '+esc(cn)+' · '+(num(u.pointsTotal)||0)+' pts</div></div>'+
+          '<div style="flex:none;min-width:150px;"><label>Reassign</label><select class="pl-reassign" data-uid="'+esc(u.id)+'">'+opts+'</select></div>'+
+        '</div>'+
+        (ob?'<div style="margin-top:8px;"><button class="btn ghost sm pl-ob-tog" data-uid="'+esc(u.id)+'">Onboarding answers</button>'+
+          '<div class="pl-ob" id="pl-ob-'+esc(u.id)+'" style="display:none;margin-top:8px;border-top:1px solid var(--border);padding-top:8px;">'+(obRows||'<span class="muted" style="font-size:13px;">No answers.</span>')+'</div></div>':"")+
+        '</div>';
+    }).join("");
+    Array.prototype.forEach.call(host.querySelectorAll(".pl-reassign"),function(s){ s.onchange=function(){
+      var uid=s.getAttribute("data-uid"), val=s.value;
+      s.disabled=true;
+      db.collection("users").doc(uid).update({cohortId:val}).then(function(){
+        var u=find(usersCache,uid); if(u)u.cohortId=val; s.disabled=false; renderPlayers();
+      }).catch(function(e){ s.disabled=false; alert("Couldn't reassign: "+e.message); });
+    }; });
+    Array.prototype.forEach.call(host.querySelectorAll(".pl-ob-tog"),function(b){ b.onclick=function(){
+      var el=$("pl-ob-"+b.getAttribute("data-uid")); if(el) el.style.display=el.style.display==="none"?"block":"none";
+    }; });
+  }
+
+  // ---- app settings: bottom nav + onboarding questions ----
+  var NAV_SLOTS=[{key:"workouts",label:"Workouts",icon:"dumbbell"},{key:"leaders",label:"Leaders",icon:"trophy"},{key:"goals",label:"Goals",icon:"target"},{key:"profile",label:"Profile",icon:"user"}];
+  var NAV_ICONS=["dumbbell","trophy","target","user","basketball","calendar","chart","flame","clipboard","home"];
+  function openConfig(){ sel={type:"config",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-config"); loadNavConfig(); renderQuestions(); hideQForm(); }
+  function renderNavRows(tabs){
+    $("cf-nav").innerHTML=NAV_SLOTS.map(function(slot,i){
+      var t=(tabs&&tabs[i])||slot;
+      var iconOpts=NAV_ICONS.map(function(ic){ return '<option value="'+ic+'"'+((t.icon||slot.icon)===ic?" selected":"")+'>'+ic+'</option>'; }).join("");
+      return '<div class="row" style="align-items:flex-end;margin-bottom:10px;">'+
+        '<div style="flex:none;min-width:90px;"><div class="muted" style="font-size:12px;font-weight:700;padding-bottom:5px;text-transform:capitalize;">'+esc(slot.key)+'</div></div>'+
+        '<div><label>Label</label><input class="field cf-nav-label" data-key="'+slot.key+'" value="'+esc(t.label||slot.label)+'" /></div>'+
+        '<div><label>Icon</label><select class="cf-nav-icon" data-key="'+slot.key+'">'+iconOpts+'</select></div>'+
+        '</div>';
+    }).join("");
+  }
+  function loadNavConfig(){
+    renderNavRows(null);
+    db.collection("app-config").doc("nav").get().then(function(s){
+      if(s.exists&&s.data().tabs)renderNavRows(s.data().tabs);
+    }).catch(function(){});
+  }
+  $("cf-nav-save").onclick=function(){
+    $("cf-nav-err").textContent="";
+    var tabs=NAV_SLOTS.map(function(slot){
+      var lblEl=document.querySelector('.cf-nav-label[data-key="'+slot.key+'"]');
+      var icEl=document.querySelector('.cf-nav-icon[data-key="'+slot.key+'"]');
+      return {key:slot.key,label:(lblEl?lblEl.value.trim():"")||slot.label,icon:(icEl?icEl.value:slot.icon)};
+    });
+    db.collection("app-config").doc("nav").set({tabs:tabs,updatedAt:ts()})
+      .then(function(){ flash($("cf-nav-save"),"Saved ✓"); })
+      .catch(function(e){ $("cf-nav-err").textContent=e.message; });
+  };
+  function hideQForm(){ $("cf-q-form").classList.add("hide"); $("cf-q-err").textContent=""; }
+  function resetQForm(){ $("cf-q-id").value=""; $("cf-q-label").value=""; $("cf-q-type").value="choice"; $("cf-q-options").value=""; $("cf-q-order").value=""; $("cf-q-required").checked=false; $("cf-q-err").textContent=""; }
+  $("cf-q-new").onclick=function(){ resetQForm(); $("cf-q-order").value=questionsCache.length; $("cf-q-form").classList.remove("hide"); $("cf-q-label").focus(); };
+  $("cf-q-cancel").onclick=function(){ hideQForm(); };
+  $("cf-q-save").onclick=function(){
+    var label=$("cf-q-label").value.trim(); if(!label){ $("cf-q-err").textContent="Label is required."; return; } $("cf-q-err").textContent="";
+    var type=$("cf-q-type").value;
+    var options=(type==="choice")?$("cf-q-options").value.split(",").map(function(s){return s.trim();}).filter(Boolean):[];
+    var ord=$("cf-q-order").value; ord=(ord===""||isNaN(parseInt(ord,10)))?questionsCache.length:parseInt(ord,10);
+    var data={label:label,type:type,options:options,required:$("cf-q-required").checked,order:ord,updatedAt:ts()};
+    var id=$("cf-q-id").value;
+    (id?db.collection("onboarding-questions").doc(id).set(data,{merge:true}):db.collection("onboarding-questions").add(add0(data)))
+      .then(function(){ hideQForm(); flash($("cf-q-save"),"Saved ✓"); })
+      .catch(function(e){ $("cf-q-err").textContent=e.message; });
+  };
+  function renderQuestions(){
+    var host=$("cf-q-list"); if(!host) return;
+    if(!questionsCache.length){ host.innerHTML='<div class="navempty" style="color:var(--muted)">No questions yet.</div>'; return; }
+    host.innerHTML=questionsCache.map(function(q){
+      var meta=[esc(q.type||"text"), q.required?"required":""].filter(Boolean).join(" · ");
+      return '<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding:11px 14px;">'+
+        '<div style="flex:1;min-width:0;"><div style="font-weight:700;">'+esc(q.label||"(untitled)")+'</div>'+
+        '<div class="muted" style="font-size:12px;margin-top:2px;">'+meta+(q.options&&q.options.length?(" · "+esc(q.options.join(", "))):"")+'</div></div>'+
+        '<button class="btn ghost sm cf-q-edit" data-id="'+esc(q.id)+'">Edit</button>'+
+        '<button class="btn danger sm cf-q-del" data-id="'+esc(q.id)+'">Delete</button></div>';
+    }).join("");
+    Array.prototype.forEach.call(host.querySelectorAll(".cf-q-edit"),function(b){ b.onclick=function(){ editQuestion(b.getAttribute("data-id")); }; });
+    Array.prototype.forEach.call(host.querySelectorAll(".cf-q-del"),function(b){ b.onclick=function(){ delQuestion(b.getAttribute("data-id")); }; });
+  }
+  function editQuestion(id){
+    var q=find(questionsCache,id); if(!q) return;
+    $("cf-q-id").value=id; $("cf-q-label").value=q.label||""; $("cf-q-type").value=q.type||"choice";
+    $("cf-q-options").value=(q.options||[]).join(", "); $("cf-q-order").value=(q.order!=null?q.order:""); $("cf-q-required").checked=q.required===true; $("cf-q-err").textContent="";
+    $("cf-q-form").classList.remove("hide"); $("cf-q-label").focus();
+  }
+  function delQuestion(id){ if(confirm("Delete this question?")) db.collection("onboarding-questions").doc(id)["delete"]().catch(function(e){ alert("Couldn't delete: "+e.message); }); }
 
   // ---- helpers ----
   function ts(){return firebase.firestore.FieldValue.serverTimestamp();}
