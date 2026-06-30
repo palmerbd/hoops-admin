@@ -105,6 +105,7 @@
       <div><div class="bn">Hoops Made Simple</div><div class="bs">Coach portal</div></div>
     </div>
     <div class="newrow">
+      <button class="newbtn" id="new-t">+ Training</button>
       <button class="newbtn" id="new-w">+ Workout</button>
       <button class="newbtn" id="new-d">+ Drill</button>
     </div>
@@ -113,6 +114,8 @@
       <div class="navitem" id="nav-cohorts" style="margin-bottom:4px;"><span class="nm">▦ Cohorts</span><span class="count" id="co-count">0</span></div>
       <div class="navitem" id="nav-players" style="margin-bottom:4px;"><span class="nm">👤 Players</span></div>
       <div class="navitem" id="nav-config" style="margin-bottom:4px;"><span class="nm">⚙ App settings</span></div>
+      <div class="navhead">Trainings <span class="count" id="t-count">0</span></div>
+      <div id="nav-trainings"><div class="navempty">No trainings yet</div></div>
       <div class="navhead">Workouts <span class="count" id="w-count">0</span></div>
       <div id="nav-workouts"><div class="navempty">No workouts yet</div></div>
       <div class="navhead">Drills <span class="count" id="d-count">0</span></div>
@@ -123,6 +126,50 @@
 
   <main class="main"><div class="mainwrap">
     <div id="empty" class="empty">Pick a workout or drill from the left,<br/>or hit <b>+ Workout</b> / <b>+ Drill</b> to create one.</div>
+
+    <!-- TRAINING EDITOR -->
+    <div id="ed-training" class="hide">
+      <div class="ed-head"><h2 id="t-title">New training</h2><button id="t-del" class="btn danger sm hide">Delete</button></div>
+      <input type="hidden" id="t-id" />
+      <div class="formgrid">
+        <label>Name</label>
+        <input id="t-name" class="field" placeholder="e.g. Tuesday Skills Session" />
+        <label>Description</label>
+        <textarea id="t-desc" rows="2" placeholder="What this training session covers"></textarea>
+        <label>Workouts (check in the order players should do them)</label>
+        <div class="drillpick" id="t-workouts"><small class="help">Create workouts first, then pick them here.</small></div>
+        <label>Location (in-person)</label>
+        <input id="t-loc" class="field" placeholder="e.g. Main Gym, 123 Court St" />
+        <label>Schedule (optional)</label>
+        <select id="t-sched-mode"><option value="none">No schedule</option><option value="recurring">Recurring (weekly)</option><option value="oneoff">One-time date</option></select>
+        <div id="t-sched-recurring" class="hide" style="margin-top:10px;">
+          <label>Days</label>
+          <div class="row" style="gap:6px;">
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="0" /> Sun</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="1" /> Mon</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="2" /> Tue</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="3" /> Wed</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="4" /> Thu</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="5" /> Fri</label>
+            <label class="check" style="flex:none;"><input type="checkbox" class="t-sched-day" value="6" /> Sat</label>
+          </div>
+          <label style="margin-top:10px;">Time</label>
+          <input id="t-sched-time" class="field" type="time" />
+        </div>
+        <div id="t-sched-oneoff" class="hide" style="margin-top:10px;">
+          <div class="row">
+            <div><label>Date</label><input id="t-sched-date" class="field" type="date" /></div>
+            <div><label>Time</label><input id="t-sched-otime" class="field" type="time" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <label class="check"><input type="checkbox" id="t-pub" checked /> Published (visible in app)</label>
+        <span class="sp"></span>
+        <button id="t-save" class="btn">Save training</button>
+      </div>
+      <div id="t-err" class="err"></div>
+    </div>
 
     <!-- WORKOUT EDITOR -->
     <div id="ed-workout" class="hide">
@@ -137,28 +184,6 @@
         <textarea id="w-desc" rows="2" placeholder="What this workout focuses on"></textarea>
         <label>Drills (check in the order players should do them)</label>
         <div class="drillpick" id="w-drills"><small class="help">Add drills first, then pick them here.</small></div>
-        <label>Schedule (optional)</label>
-        <select id="w-sched-mode"><option value="none">No schedule</option><option value="recurring">Recurring (weekly)</option><option value="oneoff">One-time date</option></select>
-        <div id="w-sched-recurring" class="hide" style="margin-top:10px;">
-          <label>Days</label>
-          <div class="row" style="gap:6px;">
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="0" /> Sun</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="1" /> Mon</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="2" /> Tue</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="3" /> Wed</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="4" /> Thu</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="5" /> Fri</label>
-            <label class="check" style="flex:none;"><input type="checkbox" class="w-sched-day" value="6" /> Sat</label>
-          </div>
-          <label style="margin-top:10px;">Time</label>
-          <input id="w-sched-time" class="field" type="time" />
-        </div>
-        <div id="w-sched-oneoff" class="hide" style="margin-top:10px;">
-          <div class="row">
-            <div><label>Date</label><input id="w-sched-date" class="field" type="date" /></div>
-            <div><label>Time</label><input id="w-sched-otime" class="field" type="time" /></div>
-          </div>
-        </div>
       </div>
       <div class="actions">
         <label class="check"><input type="checkbox" id="w-pub" checked /> Published (visible in app)</label>
@@ -314,7 +339,7 @@
   var screen=function(id){["login","notadmin","app"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});};
   firebase.initializeApp(window.FIREBASE_CONFIG);
   var auth=firebase.auth(), db=firebase.firestore();
-  var drillsCache=[], workoutsCache=[], codesCache=[], reqCache=[], cohortsCache=[], questionsCache=[], usersCache=[], sel=null; // sel = {type,id}
+  var drillsCache=[], workoutsCache=[], trainingsCache=[], codesCache=[], reqCache=[], cohortsCache=[], questionsCache=[], usersCache=[], sel=null; // sel = {type,id}
 
   // ---- auth ----
   $("li-go").onclick=function(){doAuth(false);}; $("li-su").onclick=function(){doAuth(true);};
@@ -351,7 +376,13 @@
     db.collection("workouts").orderBy("name").onSnapshot(function(qs){
       workoutsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;workoutsCache.push(o);});
       $("w-count").textContent=workoutsCache.length; renderNav("workouts");
+      if(sel&&sel.type==="training")renderTrainingPicker();
       if(sel&&sel.type==="workout"&&!find(workoutsCache,sel.id))showEmpty();
+    });
+    db.collection("trainings").orderBy("name").onSnapshot(function(qs){
+      trainingsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;trainingsCache.push(o);});
+      $("t-count").textContent=trainingsCache.length; renderNav("trainings");
+      if(sel&&sel.type==="training"&&!find(trainingsCache,sel.id))showEmpty();
     });
     db.collection("invite-codes").onSnapshot(function(qs){
       codesCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;codesCache.push(o);});
@@ -373,7 +404,7 @@
   }
 
   function renderNav(kind){
-    var arr=kind==="workouts"?workoutsCache:drillsCache, host=$("nav-"+kind);
+    var arr=kind==="workouts"?workoutsCache:(kind==="trainings"?trainingsCache:drillsCache), host=$("nav-"+kind);
     if(!arr.length){host.innerHTML='<div class="navempty">No '+kind+' yet</div>';return;}
     host.innerHTML=arr.map(function(o){
       var on=sel&&sel.type===kind.slice(0,-1)&&sel.id===o.id;
@@ -382,55 +413,26 @@
     }).join("");
     Array.prototype.forEach.call(host.querySelectorAll(".navitem"),function(el){
       el.onclick=function(){ var id=el.getAttribute("data-id");
-        if(kind==="workouts")openWorkout(id); else openDrill(id); };
+        if(kind==="workouts")openWorkout(id); else if(kind==="trainings")openTraining(id); else openDrill(id); };
     });
   }
 
-  function showOnly(id){["empty","ed-workout","ed-drill","ed-access","ed-cohorts","ed-players","ed-config"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
+  function showOnly(id){["empty","ed-training","ed-workout","ed-drill","ed-access","ed-cohorts","ed-players","ed-config"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
     var na=$("nav-access"); if(na) na.classList.toggle("on", id==="ed-access");
     var nc=$("nav-cohorts"); if(nc) nc.classList.toggle("on", id==="ed-cohorts");
     var np=$("nav-players"); if(np) np.classList.toggle("on", id==="ed-players");
     var ng=$("nav-config"); if(ng) ng.classList.toggle("on", id==="ed-config");}
-  function showEmpty(){sel=null;showOnly("empty");renderNav("workouts");renderNav("drills");}
+  function showEmpty(){sel=null;showOnly("empty");renderNav("trainings");renderNav("workouts");renderNav("drills");}
 
   // ---- workout editor ----
-  $("new-w").onclick=function(){sel={type:"workout",id:null};resetW();showOnly("ed-workout");renderNav("workouts");renderNav("drills");};
+  $("new-w").onclick=function(){sel={type:"workout",id:null};resetW();showOnly("ed-workout");renderNav("trainings");renderNav("workouts");renderNav("drills");};
   function openWorkout(id){var w=find(workoutsCache,id);if(!w)return;sel={type:"workout",id:id};
     $("w-id").value=id;$("w-name").value=w.name||"";$("w-desc").value=w.description||"";$("w-diff").value=w.difficulty||"Beginner";
     $("w-pub").checked=w.published!==false;$("w-title").textContent="Edit workout";$("w-del").classList.remove("hide");
     renderPicker();var ids=w.orderedDrillIds||[];document.querySelectorAll('#w-drills input').forEach(function(c){c.checked=ids.indexOf(c.value)>=0;});
-    loadSchedule(w.schedule);
-    showOnly("ed-workout");renderNav("workouts");renderNav("drills");}
-  function loadSchedule(sch){
-    sch=sch||null;
-    var mode=(sch&&sch.mode)||"none";
-    $("w-sched-mode").value=mode;
-    var days=(sch&&sch.days)||[];
-    document.querySelectorAll('.w-sched-day').forEach(function(c){c.checked=days.indexOf(num(c.value))>=0;});
-    $("w-sched-time").value=(mode==="recurring"&&sch&&sch.time)?sch.time:"";
-    $("w-sched-date").value=(mode==="oneoff"&&sch&&sch.date)?sch.date:"";
-    $("w-sched-otime").value=(mode==="oneoff"&&sch&&sch.time)?sch.time:"";
-    syncSchedMode();
-  }
-  function syncSchedMode(){
-    var m=$("w-sched-mode").value;
-    $("w-sched-recurring").classList.toggle("hide",m!=="recurring");
-    $("w-sched-oneoff").classList.toggle("hide",m!=="oneoff");
-  }
-  $("w-sched-mode").onchange=syncSchedMode;
-  function computeSchedule(){
-    var m=$("w-sched-mode").value;
-    if(m==="recurring"){
-      var days=[];document.querySelectorAll('.w-sched-day:checked').forEach(function(c){days.push(num(c.value));});
-      return {mode:"recurring",days:days,time:$("w-sched-time").value||""};
-    }
-    if(m==="oneoff"){
-      return {mode:"oneoff",date:$("w-sched-date").value||"",time:$("w-sched-otime").value||""};
-    }
-    return null;
-  }
+    showOnly("ed-workout");renderNav("trainings");renderNav("workouts");renderNav("drills");}
   function resetW(){$("w-id").value="";$("w-name").value="";$("w-desc").value="";$("w-diff").value="Beginner";$("w-pub").checked=true;
-    $("w-title").textContent="New workout";$("w-del").classList.add("hide");$("w-err").textContent="";renderPicker();loadSchedule(null);}
+    $("w-title").textContent="New workout";$("w-del").classList.add("hide");$("w-err").textContent="";renderPicker();}
   function renderPicker(){
     if(!drillsCache.length){$("w-drills").innerHTML='<small class="help">Add drills first, then pick them here.</small>';return;}
     var chk={};document.querySelectorAll('#w-drills input:checked').forEach(function(c){chk[c.value]=true;});
@@ -441,7 +443,7 @@
     var ids=[];document.querySelectorAll('#w-drills input:checked').forEach(function(c){ids.push(c.value);});
     var pts=0;ids.forEach(function(id){var d=find(drillsCache,id);if(d)pts+=(d.points||0);});
     var data={name:name,description:$("w-desc").value.trim()||null,orderedDrillIds:ids,totalPoints:pts,difficulty:$("w-diff").value,
-      tags:[],schedule:computeSchedule(),published:$("w-pub").checked,updatedAt:ts()};
+      tags:[],schedule:null,published:$("w-pub").checked,updatedAt:ts()};
     var id=$("w-id").value;
     (id?db.collection("workouts").doc(id).set(data,{merge:true}):db.collection("workouts").add(add0(data)))
       .then(function(ref){ if(!id&&ref)sel={type:"workout",id:ref.id}; flash($("w-save"),"Saved ✓"); })
@@ -449,13 +451,68 @@
   };
   $("w-del").onclick=function(){var id=$("w-id").value;if(id&&confirm("Delete this workout?"))db.collection("workouts").doc(id)["delete"]().then(showEmpty);};
 
+  // ---- training editor ----
+  $("new-t").onclick=function(){sel={type:"training",id:null};resetT();showOnly("ed-training");renderNav("trainings");renderNav("workouts");renderNav("drills");};
+  function openTraining(id){var t=find(trainingsCache,id);if(!t)return;sel={type:"training",id:id};
+    $("t-id").value=id;$("t-name").value=t.name||"";$("t-desc").value=t.description||"";$("t-loc").value=t.location||"";
+    $("t-pub").checked=t.published!==false;$("t-title").textContent="Edit training";$("t-del").classList.remove("hide");
+    renderTrainingPicker();var ids=t.orderedWorkoutIds||[];document.querySelectorAll('#t-workouts input').forEach(function(c){c.checked=ids.indexOf(c.value)>=0;});
+    loadTSchedule(t.schedule);
+    showOnly("ed-training");renderNav("trainings");renderNav("workouts");renderNav("drills");}
+  function loadTSchedule(sch){
+    sch=sch||null;
+    var mode=(sch&&sch.mode)||"none";
+    $("t-sched-mode").value=mode;
+    var days=(sch&&sch.days)||[];
+    document.querySelectorAll('.t-sched-day').forEach(function(c){c.checked=days.indexOf(num(c.value))>=0;});
+    $("t-sched-time").value=(mode==="recurring"&&sch&&sch.time)?sch.time:"";
+    $("t-sched-date").value=(mode==="oneoff"&&sch&&sch.date)?sch.date:"";
+    $("t-sched-otime").value=(mode==="oneoff"&&sch&&sch.time)?sch.time:"";
+    syncTSchedMode();
+  }
+  function syncTSchedMode(){
+    var m=$("t-sched-mode").value;
+    $("t-sched-recurring").classList.toggle("hide",m!=="recurring");
+    $("t-sched-oneoff").classList.toggle("hide",m!=="oneoff");
+  }
+  $("t-sched-mode").onchange=syncTSchedMode;
+  function computeTSchedule(){
+    var m=$("t-sched-mode").value;
+    if(m==="recurring"){
+      var days=[];document.querySelectorAll('.t-sched-day:checked').forEach(function(c){days.push(num(c.value));});
+      return {mode:"recurring",days:days,time:$("t-sched-time").value||""};
+    }
+    if(m==="oneoff"){
+      return {mode:"oneoff",date:$("t-sched-date").value||"",time:$("t-sched-otime").value||""};
+    }
+    return null;
+  }
+  function resetT(){$("t-id").value="";$("t-name").value="";$("t-desc").value="";$("t-loc").value="";$("t-pub").checked=true;
+    $("t-title").textContent="New training";$("t-del").classList.add("hide");$("t-err").textContent="";renderTrainingPicker();loadTSchedule(null);}
+  function renderTrainingPicker(){
+    if(!workoutsCache.length){$("t-workouts").innerHTML='<small class="help">Create workouts first, then pick them here.</small>';return;}
+    var chk={};document.querySelectorAll('#t-workouts input:checked').forEach(function(c){chk[c.value]=true;});
+    $("t-workouts").innerHTML=workoutsCache.map(function(w){return '<label><input type="checkbox" value="'+w.id+'"'+(chk[w.id]?' checked':'')+' /> '+esc(w.name)+' <span class="muted" style="font-size:12px">· '+(w.difficulty||"Beginner")+'</span></label>';}).join("");
+  }
+  $("t-save").onclick=function(){
+    var name=$("t-name").value.trim();if(!name){$("t-err").textContent="Name is required.";return;}$("t-err").textContent="";
+    var ids=[];document.querySelectorAll('#t-workouts input:checked').forEach(function(c){ids.push(c.value);});
+    var data={name:name,description:$("t-desc").value.trim()||null,orderedWorkoutIds:ids,
+      schedule:computeTSchedule(),location:$("t-loc").value.trim()||null,published:$("t-pub").checked,updatedAt:ts()};
+    var id=$("t-id").value;
+    (id?db.collection("trainings").doc(id).set(data,{merge:true}):db.collection("trainings").add(add0(data)))
+      .then(function(ref){ if(!id&&ref)sel={type:"training",id:ref.id}; flash($("t-save"),"Saved ✓"); })
+      .catch(function(e){$("t-err").textContent=e.message;});
+  };
+  $("t-del").onclick=function(){var id=$("t-id").value;if(id&&confirm("Delete this training?"))db.collection("trainings").doc(id)["delete"]().then(showEmpty);};
+
   // ---- drill editor ----
-  $("new-d").onclick=function(){sel={type:"drill",id:null};resetD();showOnly("ed-drill");renderNav("workouts");renderNav("drills");};
+  $("new-d").onclick=function(){sel={type:"drill",id:null};resetD();showOnly("ed-drill");renderNav("trainings");renderNav("workouts");renderNav("drills");};
   function openDrill(id){var d=find(drillsCache,id);if(!d)return;sel={type:"drill",id:id};
     $("d-id").value=id;$("d-name").value=d.name||"";$("d-desc").value=d.description||"";$("d-reps").value=d.reps||"";
     $("d-sets").value=d.sets||"";$("d-dur").value=d.durationSeconds||"";$("d-video").value=d.videoUrl||"";$("d-points").value=d.points||0;
     $("d-pub").checked=d.published!==false;$("d-title").textContent="Edit drill";$("d-del").classList.remove("hide");
-    showOnly("ed-drill");renderNav("workouts");renderNav("drills");}
+    showOnly("ed-drill");renderNav("trainings");renderNav("workouts");renderNav("drills");}
   function resetD(){$("d-id").value="";["d-name","d-desc","d-reps","d-sets","d-dur","d-video"].forEach(function(i){$(i).value="";});
     $("d-points").value=10;$("d-pub").checked=true;$("d-title").textContent="New drill";$("d-del").classList.add("hide");$("d-err").textContent="";}
   $("d-save").onclick=function(){
@@ -491,7 +548,7 @@
       .catch(function(e){ if(m){m.style.color='';m.textContent=e.message;} });
   }
 
-  function openAccess(){ sel=null; renderNav("workouts"); renderNav("drills"); showOnly("ed-access"); $("ac-new").classList.add("hide"); $("ac-err").textContent=""; }
+  function openAccess(){ sel=null; renderNav("trainings"); renderNav("workouts"); renderNav("drills"); showOnly("ed-access"); $("ac-new").classList.add("hide"); $("ac-err").textContent=""; }
   function genCode(){ var A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",s=""; for(var i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)]; return "HMS-"+s; }
   $("ac-gen").onclick=function(){
     var cohort=$("ac-cohort").value.trim()||"default", code=genCode();
@@ -568,7 +625,7 @@
       if(pprev&&(pprev==="all"||find(cohortsCache,pprev)))pf.value=pprev;
     }
   }
-  function openCohorts(){ sel={type:"cohorts",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-cohorts"); hideCohortForm(); }
+  function openCohorts(){ sel={type:"cohorts",id:null}; renderNav("trainings"); renderNav("workouts"); renderNav("drills"); showOnly("ed-cohorts"); hideCohortForm(); }
   function hideCohortForm(){ $("co-form").classList.add("hide"); $("co-err").textContent=""; }
   function resetCohortForm(){ $("co-id").value=""; $("co-name").value=""; $("co-goallabel").value=""; $("co-goaldate").value=""; $("co-err").textContent=""; }
   $("co-new").onclick=function(){ resetCohortForm(); $("co-form").classList.remove("hide"); $("co-name").focus(); };
@@ -603,7 +660,7 @@
   function delCohort(id){ if(confirm("Delete this cohort?")) db.collection("cohorts").doc(id)["delete"]().catch(function(e){ alert("Couldn't delete: "+e.message); }); }
 
   // ---- players ----
-  function openPlayers(){ sel={type:"players",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-players"); loadPlayers(); }
+  function openPlayers(){ sel={type:"players",id:null}; renderNav("trainings"); renderNav("workouts"); renderNav("drills"); showOnly("ed-players"); loadPlayers(); }
   function loadPlayers(){
     $("pl-list").innerHTML='<div class="navempty" style="color:var(--muted)">Loading players…</div>';
     db.collection("users").get().then(function(qs){
@@ -656,7 +713,7 @@
   // ---- app settings: bottom nav + onboarding questions ----
   var NAV_SLOTS=[{key:"workouts",label:"Workouts",icon:"dumbbell"},{key:"leaders",label:"Leaders",icon:"trophy"},{key:"goals",label:"Goals",icon:"target"},{key:"profile",label:"Profile",icon:"user"}];
   var NAV_ICONS=["dumbbell","trophy","target","user","basketball","calendar","chart","flame","clipboard","home"];
-  function openConfig(){ sel={type:"config",id:null}; renderNav("workouts"); renderNav("drills"); showOnly("ed-config"); loadNavConfig(); renderQuestions(); hideQForm(); }
+  function openConfig(){ sel={type:"config",id:null}; renderNav("trainings"); renderNav("workouts"); renderNav("drills"); showOnly("ed-config"); loadNavConfig(); renderQuestions(); hideQForm(); }
   function renderNavRows(tabs){
     $("cf-nav").innerHTML=NAV_SLOTS.map(function(slot,i){
       var t=(tabs&&tabs[i])||slot;
