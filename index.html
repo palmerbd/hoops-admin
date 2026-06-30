@@ -186,6 +186,16 @@
         <div id="ac-err" class="err"></div>
       </div>
 
+      <div class="card" style="margin-bottom:18px;">
+        <div style="font-weight:700;margin-bottom:8px;">App appearance</div>
+        <div class="muted" style="font-size:13px;margin-bottom:10px;">The skin players see in the app. Current: <b id="sk-cur">Dark</b>.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn sm" id="sk-dark">Dark skin</button>
+          <button class="btn ghost sm" id="sk-light">Light skin</button>
+        </div>
+        <div id="sk-msg" class="muted" style="font-size:12px;margin-top:8px;"></div>
+      </div>
+
       <div style="font-weight:800;margin:0 2px 8px;">Pending access requests <span class="count" id="ac-reqcount" style="background:#e7edf2;color:#0b7f8c;">0</span></div>
       <div id="ac-requests"><div class="navempty" style="color:var(--muted)">No pending requests.</div></div>
 
@@ -253,6 +263,7 @@
       reqCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;reqCache.push(o);});
       renderRequests(); updateBadge();
     }, function(){});
+    setupSkin();
   }
 
   function renderNav(kind){
@@ -324,6 +335,21 @@
 
   // ---- access & invite codes ----
   $("nav-access").onclick=function(){ openAccess(); };
+  // ---- app skin (light/dark), stored at /app-config/theme ----
+  function setSkinLabel(s){ var el=$("sk-cur"); if(el) el.textContent=(s==="light")?"Light":"Dark"; }
+  function setupSkin(){
+    var d=$("sk-dark"), l=$("sk-light");
+    if(d) d.onclick=function(){ saveSkin("dark"); };
+    if(l) l.onclick=function(){ saveSkin("light"); };
+    db.collection("app-config").doc("theme").get().then(function(s){ if(s.exists && s.data().skin) setSkinLabel(s.data().skin); }).catch(function(){});
+  }
+  function saveSkin(s){
+    var m=$("sk-msg"); if(m){m.style.color='';m.textContent="Saving…";}
+    db.collection("app-config").doc("theme").set({skin:s,updatedAt:ts(),updatedBy:auth.currentUser?auth.currentUser.uid:null},{merge:true})
+      .then(function(){ setSkinLabel(s); if(m){m.style.color='#0b7f8c';m.textContent="Saved — players get the "+s+" skin next time the app loads.";} })
+      .catch(function(e){ if(m){m.style.color='';m.textContent=e.message;} });
+  }
+
   function openAccess(){ sel=null; renderNav("workouts"); renderNav("drills"); showOnly("ed-access"); $("ac-new").classList.add("hide"); $("ac-err").textContent=""; }
   function genCode(){ var A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",s=""; for(var i=0;i<4;i++)s+=A[Math.floor(Math.random()*A.length)]; return "HMS-"+s; }
   $("ac-gen").onclick=function(){
