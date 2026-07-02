@@ -4,69 +4,82 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hoops Made Simple — Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#eef2f5;--surface:#fff;--side:#0f2330;--side-2:#16323f;--side-ink:#cfe0e6;--side-on:#19c0cf;
-    --border:#e4e9ef;--field:#fff;--text:#16233a;--muted:#64748b;
-    --accent:#0e8a9e;--accent-ink:#fff;--accent-soft:rgba(14,138,158,.1);--danger:#dc2626;
+    --bg:#FAFAFA;--surface:#FFFFFF;--text:#171717;--muted:#666666;--faint:#8F8F8F;
+    --border:#EBEBEB;--field:#fff;--hover:#F2F2F2;--hover-surface:#FAFAFA;
+    --accent:#171717;--accent-ink:#fff;--accent-soft:#F2F2F2;--danger:#e5484d;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-  .btn{background:var(--accent);color:var(--accent-ink);border:none;border-radius:9px;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  body{font-family:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;-webkit-font-smoothing:antialiased}
+  .btn{background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;padding:10px 16px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;line-height:1.2}
+  .btn:hover{background:#000}
   .btn:disabled{opacity:.55;cursor:default}
-  .btn.sm{padding:7px 11px;font-size:13px;border-radius:8px}
-  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--border)}
-  .btn.danger{background:transparent;color:var(--danger);border:1px solid #f0c9c9}
-  .field,select,textarea{width:100%;background:var(--field);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:14px;color:var(--text);font-family:inherit;outline:none}
+  .btn.sm{padding:8px 12px;font-size:14px;border-radius:8px}
+  .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
+  .btn.ghost:hover{background:var(--hover-surface)}
+  .btn.danger{background:#fff;color:var(--danger);border:1px solid var(--border)}
+  .btn.danger:hover{background:var(--hover-surface)}
+  .field,select,textarea{width:100%;background:var(--field);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--text);font-family:inherit;outline:none}
   .field:focus,select:focus,textarea:focus{border-color:var(--accent)}
   textarea{resize:vertical}
-  label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 5px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 6px}
   .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:120px}
   .muted{color:var(--muted)} .err{color:var(--danger);font-size:13px;min-height:17px;margin-top:6px}
   .hide{display:none!important}
   .center{min-height:90vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px}
-  .check{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}.check input{width:auto}
-  .pill{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em}
-  .pill.pub{background:rgba(25,192,207,.15);color:#0b7f8c}.pill.draft{background:#fff3cd;color:#8a6d00}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
+  .check{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500}.check input{width:auto}
+  .pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:.01em}
+  .pill.pub{background:#e8f5ee;color:#0a7f43}.pill.draft{background:var(--hover);color:var(--muted)}
+  .labelpill{background:var(--hover);color:var(--muted);border-radius:6px;font-size:12px;padding:2px 8px;display:inline-block}
 
   /* layout */
   #app{display:flex;min-height:100vh}
-  .sidebar{width:280px;flex:none;background:var(--side);color:var(--side-ink);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
+  .sidebar{width:280px;flex:none;background:var(--surface);color:var(--muted);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
   .brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px}
   .brand img{width:34px;height:34px;object-fit:contain}
-  .brand .bn{font-weight:800;color:#fff;font-size:15px;line-height:1.1}
-  .brand .bs{font-size:12px;color:var(--side-on);font-weight:600}
+  .brand .bn{font-weight:700;color:var(--text);font-size:15px;line-height:1.15}
+  .brand .bs{font-size:13px;color:var(--muted);font-weight:500}
   .newrow{display:flex;gap:8px;padding:0 16px 12px}
-  .newbtn{flex:1;background:var(--side-2);color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
-  .newbtn:hover{background:#1c3d4b}
+  .newbtn{flex:1;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+  .newbtn:hover{background:var(--hover-surface)}
   .navwrap{flex:1;overflow-y:auto;padding:4px 10px 10px}
-  .navhead{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#6f8a96;padding:12px 8px 6px}
-  .count{background:rgba(255,255,255,.1);color:var(--side-on);border-radius:999px;padding:1px 7px;font-size:11px}
-  .navitem{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--side-ink);font-size:14px}
-  .navitem:hover{background:rgba(255,255,255,.05)}
-  .navitem.on{background:var(--side-on);color:#04222a;font-weight:700}
+  .navhead{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:14px 8px 6px}
+  .count{background:var(--hover);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600}
+  .navitem{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:15px}
+  .navitem:hover{background:var(--hover-surface)}
+  .navitem.on{background:var(--hover);color:var(--text);font-weight:600}
   .navitem .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .navitem .dot{width:7px;height:7px;border-radius:50%;flex:none}
-  .navitem .dot.pub{background:#19c0cf}.navitem .dot.draft{background:#d6a93a}
-  .navempty{color:#5f7a86;font-size:13px;padding:6px 10px}
-  .sidefoot{border-top:1px solid rgba(255,255,255,.08);padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px}
-  .sidefoot .who{flex:1;color:#9fb6bf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .linkbtn{background:none;border:none;color:var(--side-on);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit}
+  .navitem .dot.pub{background:#0a7f43}.navitem .dot.draft{background:var(--faint)}
+  .navempty{color:var(--faint);font-size:14px;padding:6px 10px}
+  .sidefoot{border-top:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:8px;font-size:14px}
+  .sidefoot .who{flex:1;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .linkbtn{background:none;border:none;color:var(--text);cursor:pointer;font-size:14px;font-weight:600;font-family:inherit}
 
   .main{flex:1;min-width:0;overflow-y:auto;height:100vh}
-  .mainwrap{max-width:680px;margin:0 auto;padding:30px 28px 60px}
+  .mainwrap{max-width:760px;margin:0 auto;padding:36px 32px 64px}
   .empty{min-height:70vh;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;font-size:15px}
-  h2{font-size:22px;letter-spacing:-.01em;margin-bottom:4px}
-  .ed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  .formgrid label{margin-top:14px}.formgrid>label:first-child{margin-top:0}
-  .drillpick{max-height:230px;overflow:auto;border:1px solid var(--border);border-radius:9px;padding:4px;background:#fafcfd}
-  .drillpick label{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text);padding:7px 8px;cursor:pointer;margin:0;font-size:14px;border-radius:7px}
+  h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+  .ed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .formgrid label{margin-top:16px}.formgrid>label:first-child{margin-top:0}
+  .drillpick{max-height:240px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:4px;background:var(--hover-surface)}
+  .drillpick label{display:flex;align-items:center;gap:9px;font-weight:500;color:var(--text);padding:8px 9px;cursor:pointer;margin:0;font-size:15px;border-radius:7px}
   .drillpick label:hover{background:#fff}
   .drillpick input{width:auto}
-  small.help{color:var(--muted);font-size:12px}
-  .actions{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap}
+  small.help{color:var(--muted);font-size:13px}
+  .actions{display:flex;align-items:center;gap:10px;margin-top:24px;flex-wrap:wrap}
   .actions .sp{flex:1}
+  .sec-head{font-size:16px;font-weight:600;color:var(--text)}
+
+  /* overview */
+  .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:22px 20px}
+  .stat .n{font-size:36px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--text)}
+  .stat .l{font-size:14px;font-weight:500;color:var(--muted);margin-top:8px}
+  .ov-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 </style>
 </head>
 <body>
@@ -110,6 +123,7 @@
       <button class="newbtn" id="new-d">+ Drill</button>
     </div>
     <div class="navwrap">
+      <div class="navitem" id="nav-overview" style="margin-bottom:4px;"><span class="nm">▦ Overview</span></div>
       <div class="navitem" id="nav-access" style="margin-bottom:4px;"><span class="nm">⚿ Access &amp; invite codes</span><span class="count" id="ac-badge" style="display:none">0</span></div>
       <div class="navitem" id="nav-cohorts" style="margin-bottom:4px;"><span class="nm">▦ Cohorts</span><span class="count" id="co-count">0</span></div>
       <div class="navitem" id="nav-players" style="margin-bottom:4px;"><span class="nm">👤 Players</span></div>
@@ -126,6 +140,9 @@
 
   <main class="main"><div class="mainwrap">
     <div id="empty" class="empty">Pick a workout or drill from the left,<br/>or hit <b>+ Workout</b> / <b>+ Drill</b> to create one.</div>
+
+    <!-- OVERVIEW -->
+    <div id="ed-overview" class="hide"></div>
 
     <!-- TRAINING EDITOR -->
     <div id="ed-training" class="hide">
@@ -224,7 +241,7 @@
     <div id="ed-access" class="hide">
       <div class="ed-head"><h2>Access &amp; invite codes</h2></div>
       <div class="card" style="margin-bottom:18px;">
-        <div style="font-weight:700;margin-bottom:10px;">Generate an invite code</div>
+        <div class="sec-head" style="margin-bottom:12px;">Generate an invite code</div>
         <div class="row" style="align-items:flex-end;">
           <div><label>Cohort / team</label><select id="ac-cohort"><option value="default">Default / no cohort</option></select></div>
           <div style="flex:none;"><button id="ac-gen" class="btn">Generate code</button></div>
@@ -237,7 +254,7 @@
       </div>
 
       <div class="card" style="margin-bottom:18px;">
-        <div style="font-weight:700;margin-bottom:8px;">App appearance</div>
+        <div class="sec-head" style="margin-bottom:10px;">App appearance</div>
         <div class="muted" style="font-size:13px;margin-bottom:10px;">The skin players see in the app. Current: <b id="sk-cur">Dark</b>.</div>
         <div style="display:flex;gap:8px;">
           <button class="btn sm" id="sk-dark">Dark skin</button>
@@ -246,10 +263,10 @@
         <div id="sk-msg" class="muted" style="font-size:12px;margin-top:8px;"></div>
       </div>
 
-      <div style="font-weight:800;margin:0 2px 8px;">Pending access requests <span class="count" id="ac-reqcount" style="background:#e7edf2;color:#0b7f8c;">0</span></div>
+      <div class="sec-head" style="margin:0 2px 8px;">Pending access requests <span class="count" id="ac-reqcount">0</span></div>
       <div id="ac-requests"><div class="navempty" style="color:var(--muted)">No pending requests.</div></div>
 
-      <div style="font-weight:800;margin:22px 2px 8px;">Invite codes</div>
+      <div class="sec-head" style="margin:22px 2px 8px;">Invite codes</div>
       <div id="ac-codes"><div class="navempty" style="color:var(--muted)">No codes yet.</div></div>
     </div>
 
@@ -290,7 +307,7 @@
     <div id="ed-config" class="hide">
       <div class="ed-head"><h2>App settings</h2></div>
       <div class="card" style="margin-bottom:18px;">
-        <div style="font-weight:700;margin-bottom:10px;">Bottom nav</div>
+        <div class="sec-head" style="margin-bottom:10px;">Bottom nav</div>
         <div class="muted" style="font-size:13px;margin-bottom:12px;">The four tabs along the bottom of the app, in order.</div>
         <div id="cf-nav"></div>
         <div class="actions">
@@ -301,8 +318,8 @@
       </div>
 
       <div class="card">
-        <div class="ed-head" style="margin-bottom:12px;"><div style="font-weight:700;">Onboarding questions</div><button id="cf-q-new" class="btn sm">+ Add question</button></div>
-        <div id="cf-q-form" class="card hide" style="margin-bottom:14px;background:#fafcfd;">
+        <div class="ed-head" style="margin-bottom:12px;"><div class="sec-head">Onboarding questions</div><button id="cf-q-new" class="btn sm">+ Add question</button></div>
+        <div id="cf-q-form" class="card hide" style="margin-bottom:14px;background:var(--hover-surface);">
           <input type="hidden" id="cf-q-id" />
           <div class="formgrid">
             <label>Label</label>
@@ -339,14 +356,14 @@
   var screen=function(id){["login","notadmin","app"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});};
   firebase.initializeApp(window.FIREBASE_CONFIG);
   var auth=firebase.auth(), db=firebase.firestore();
-  var drillsCache=[], workoutsCache=[], trainingsCache=[], codesCache=[], reqCache=[], cohortsCache=[], questionsCache=[], usersCache=[], sel=null; // sel = {type,id}
+  var drillsCache=[], workoutsCache=[], trainingsCache=[], codesCache=[], reqCache=[], cohortsCache=[], questionsCache=[], usersCache=[], usersCount=null, sel=null; // sel = {type,id}
 
   // ---- auth ----
   $("li-go").onclick=function(){doAuth(false);}; $("li-su").onclick=function(){doAuth(true);};
   $("li-reset").onclick=function(){
     var e=$("li-email").value.trim();
     if(!e){$("li-err").style.color='';$("li-err").textContent="Type your email above first, then tap Forgot password.";return;}
-    auth.sendPasswordResetEmail(e).then(function(){$("li-err").style.color='#0b7f8c';$("li-err").textContent="Reset email sent to "+e+" — check inbox and spam.";})
+    auth.sendPasswordResetEmail(e).then(function(){$("li-err").style.color='#171717';$("li-err").textContent="Reset email sent to "+e+" — check inbox and spam.";})
       .catch(function(err){$("li-err").style.color='';$("li-err").textContent=friendly(err);});
   };
   function doAuth(su){var e=$("li-email").value.trim(),p=$("li-pass").value;
@@ -362,7 +379,7 @@
   auth.onAuthStateChanged(function(user){
     if(!user){screen("login");return;}
     db.collection("admin-users").doc(user.uid).get().then(function(s){
-      if(s.exists){$("who").textContent=user.email;boot();screen("app");}
+      if(s.exists){$("who").textContent=user.email;boot();screen("app");openOverview();}
       else{$("na-uid").textContent=user.uid;screen("notadmin");}
     }).catch(function(){$("na-uid").textContent=user.uid;screen("notadmin");});
   });
@@ -372,17 +389,20 @@
       drillsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;drillsCache.push(o);});
       $("d-count").textContent=drillsCache.length; renderNav("drills"); renderPicker();
       if(sel&&sel.type==="drill"&&!find(drillsCache,sel.id))showEmpty();
+      overviewRefresh();
     });
     db.collection("workouts").orderBy("name").onSnapshot(function(qs){
       workoutsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;workoutsCache.push(o);});
       $("w-count").textContent=workoutsCache.length; renderNav("workouts");
       if(sel&&sel.type==="training")renderTrainingPicker();
       if(sel&&sel.type==="workout"&&!find(workoutsCache,sel.id))showEmpty();
+      overviewRefresh();
     });
     db.collection("trainings").orderBy("name").onSnapshot(function(qs){
       trainingsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;trainingsCache.push(o);});
       $("t-count").textContent=trainingsCache.length; renderNav("trainings");
       if(sel&&sel.type==="training"&&!find(trainingsCache,sel.id))showEmpty();
+      overviewRefresh();
     });
     db.collection("invite-codes").onSnapshot(function(qs){
       codesCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;codesCache.push(o);});
@@ -390,18 +410,22 @@
     }, function(){});
     db.collection("access-requests").onSnapshot(function(qs){
       reqCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;reqCache.push(o);});
-      renderRequests(); updateBadge();
+      renderRequests(); updateBadge(); overviewRefresh();
     }, function(){});
     db.collection("cohorts").orderBy("name").onSnapshot(function(qs){
       cohortsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;cohortsCache.push(o);});
       $("co-count").textContent=cohortsCache.length; renderCohorts(); fillCohortSelects();
+      overviewRefresh();
     }, function(){});
     db.collection("onboarding-questions").orderBy("order").onSnapshot(function(qs){
       questionsCache=[];qs.forEach(function(d){var o=d.data();o.id=d.id;questionsCache.push(o);});
       renderQuestions(); if(sel&&sel.type==="players")renderPlayers();
     }, function(){});
+    // one-off players count for the Overview
+    db.collection("users").get().then(function(qs){ usersCount=qs.size; overviewRefresh(); }).catch(function(){});
     setupSkin();
   }
+  function overviewRefresh(){ if(!$("ed-overview").classList.contains("hide")) renderOverview(); }
 
   function renderNav(kind){
     var arr=kind==="workouts"?workoutsCache:(kind==="trainings"?trainingsCache:drillsCache), host=$("nav-"+kind);
@@ -417,7 +441,8 @@
     });
   }
 
-  function showOnly(id){["empty","ed-training","ed-workout","ed-drill","ed-access","ed-cohorts","ed-players","ed-config"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
+  function showOnly(id){["empty","ed-overview","ed-training","ed-workout","ed-drill","ed-access","ed-cohorts","ed-players","ed-config"].forEach(function(s){$(s).classList.toggle("hide",s!==id);});
+    var no=$("nav-overview"); if(no) no.classList.toggle("on", id==="ed-overview");
     var na=$("nav-access"); if(na) na.classList.toggle("on", id==="ed-access");
     var nc=$("nav-cohorts"); if(nc) nc.classList.toggle("on", id==="ed-cohorts");
     var np=$("nav-players"); if(np) np.classList.toggle("on", id==="ed-players");
@@ -528,6 +553,76 @@
   };
   $("d-del").onclick=function(){var id=$("d-id").value;if(id&&confirm("Delete this drill?"))db.collection("drills").doc(id)["delete"]().then(showEmpty);};
 
+  // ---- overview ----
+  $("nav-overview").onclick=function(){ openOverview(); };
+  function openOverview(){ sel=null; renderNav("trainings"); renderNav("workouts"); renderNav("drills"); showOnly("ed-overview"); renderOverview(); }
+  function pad2(n){ return (n<10?"0":"")+n; }
+  function fmtWhen(d){
+    var days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    var mons=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var h=d.getHours(), m=d.getMinutes(), ap=h>=12?"PM":"AM", h12=(h%12)||12;
+    return days[d.getDay()]+" "+mons[d.getMonth()]+" "+d.getDate()+", "+h12+":"+pad2(m)+" "+ap;
+  }
+  // next upcoming occurrence for a training's schedule; returns Date or null
+  function nextOccurrence(sch, from){
+    if(!sch||!sch.mode) return null;
+    from=from||new Date();
+    if(sch.mode==="oneoff"){
+      if(!sch.date) return null;
+      var parts=sch.date.split("-"), tm=(sch.time||"00:00").split(":");
+      var dt=new Date(num(parts[0]),num(parts[1])-1,num(parts[2]),num(tm[0])||0,num(tm[1])||0,0,0);
+      return dt>=from?dt:null;
+    }
+    if(sch.mode==="recurring"){
+      var days=sch.days||[]; if(!days.length) return null;
+      var tm2=(sch.time||"00:00").split(":"), th=num(tm2[0])||0, tmin=num(tm2[1])||0;
+      var best=null;
+      for(var i=0;i<7;i++){
+        var cand=new Date(from.getFullYear(),from.getMonth(),from.getDate()+i,th,tmin,0,0);
+        if(days.indexOf(cand.getDay())>=0 && cand>=from){ best=cand; break; }
+      }
+      return best;
+    }
+    return null;
+  }
+  function renderOverview(){
+    var host=$("ed-overview"); if(!host) return;
+    var pending=reqCache.filter(function(r){ var s=r.status||"pending"; return s!=="approved"&&s!=="declined"; }).length;
+    var stats=[
+      {n:trainingsCache.length,l:"Trainings"},
+      {n:workoutsCache.length,l:"Workouts"},
+      {n:drillsCache.length,l:"Drills"},
+      {n:cohortsCache.length,l:"Cohorts"},
+      {n:(usersCount==null?"—":usersCount),l:"Players"},
+      {n:pending,l:"Pending access"}
+    ];
+    // next training across all trainings
+    var now=new Date(), best=null, bestName="";
+    trainingsCache.forEach(function(t){
+      var occ=nextOccurrence(t.schedule,now);
+      if(occ && (!best || occ<best)){ best=occ; bestName=t.name||"(untitled)"; }
+    });
+    var nextHtml = best
+      ? '<div style="font-size:18px;font-weight:600;">'+esc(bestName)+'</div><div class="muted" style="font-size:14px;margin-top:4px;">'+esc(fmtWhen(best))+'</div>'
+      : '<div class="muted" style="font-size:15px;">No training scheduled</div>';
+    host.innerHTML=
+      '<div class="ed-head"><h2>Overview</h2></div>'+
+      '<div class="ov-grid">'+stats.map(function(s){
+        return '<div class="stat"><div class="n">'+esc(s.n)+'</div><div class="l">'+esc(s.l)+'</div></div>';
+      }).join("")+'</div>'+
+      '<div class="sec-head" style="margin:0 2px 10px;">Next training</div>'+
+      '<div class="card" style="margin-bottom:24px;">'+nextHtml+
+        '<div class="ov-actions">'+
+          '<button class="btn sm" id="ov-new-t">+ New training</button>'+
+          '<button class="btn ghost sm" id="ov-new-w">+ New workout</button>'+
+          '<button class="btn ghost sm" id="ov-access">Review access requests</button>'+
+        '</div>'+
+      '</div>';
+    var b1=$("ov-new-t"); if(b1) b1.onclick=$("new-t").onclick;
+    var b2=$("ov-new-w"); if(b2) b2.onclick=$("new-w").onclick;
+    var b3=$("ov-access"); if(b3) b3.onclick=function(){ openAccess(); };
+  }
+
   // ---- access & invite codes ----
   $("nav-access").onclick=function(){ openAccess(); };
   $("nav-cohorts").onclick=function(){ openCohorts(); };
@@ -544,7 +639,7 @@
   function saveSkin(s){
     var m=$("sk-msg"); if(m){m.style.color='';m.textContent="Saving…";}
     db.collection("app-config").doc("theme").set({skin:s,updatedAt:ts(),updatedBy:auth.currentUser?auth.currentUser.uid:null},{merge:true})
-      .then(function(){ setSkinLabel(s); if(m){m.style.color='#0b7f8c';m.textContent="Saved — players get the "+s+" skin next time the app loads.";} })
+      .then(function(){ setSkinLabel(s); if(m){m.style.color='#171717';m.textContent="Saved — players get the "+s+" skin next time the app loads.";} })
       .catch(function(e){ if(m){m.style.color='';m.textContent=e.message;} });
   }
 
